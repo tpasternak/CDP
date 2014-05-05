@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 2.8)
+project(hello)
+add_executable(hello main.cpp hello.cpp)
+aux_source_directory(. SRC_LIST)
+set(wxWidgets_CONFIGURATION mswu)
+find_package(wxWidgets COMPONENTS core base REQUIRED)
+include(${wxWidgets_USE_FILE})
+target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
