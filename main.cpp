@@ -1,10 +1,13 @@
 #include <wx/app.h>
-#include "MainWindow.h"
+#include "MainFrame.h"
+#include "memory"
+using namespace std;
+
 class MyApp : public wxApp {
 public:
+  unique_ptr<MainFrame> frame;
   virtual bool OnInit() {
-
-    MyFrame2 *frame = new MyFrame2(NULL);
+    frame = make_unique<MainFrame>(nullptr);
     frame->Show(true);
     return true;
   };
