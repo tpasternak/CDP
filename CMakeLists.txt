@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(hello)
-add_executable(hello main.cpp ${CMAKE_BINARY_DIR}/generated/MainWindowBase.cpp)
+add_executable(hello 
+  main.cpp 
+  MainFrame.cpp
+  ${CMAKE_BINARY_DIR}/generated/MainWindowBase.cpp)
 aux_source_directory(. SRC_LIST)
 set(wxWidgets_CONFIGURATION mswu)
 find_package(wxWidgets COMPONENTS core base adv REQUIRED)
