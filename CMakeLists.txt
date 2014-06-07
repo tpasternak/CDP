@@ -7,7 +7,7 @@ find_package(wxWidgets COMPONENTS core base adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 include_directories(${CMAKE_BINARY_DIR}/generated)
-set(CMAKE_CXX_FLAGS "-std=c++1y -stdlib=libc++")
+set(CMAKE_CXX_FLAGS "-std=c++1y -stdlib=libc++ ${CMAKE_CXX_FLAGS}" )
 
 
 add_custom_command(
