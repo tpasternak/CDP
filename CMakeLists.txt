@@ -1,16 +1,29 @@
 cmake_minimum_required(VERSION 2.8)
 project(hello)
-add_executable(hello 
+set(SourceFiles 
   main.cpp 
   MainFrame.cpp
-  ${CMAKE_BINARY_DIR}/generated/MainWindowBase.cpp)
+  MainFrame.h
+  ${CMAKE_BINARY_DIR}/generated/MainWindowBase.cpp
+  ${CMAKE_BINARY_DIR}/generated/MainWindowBase.h
+)
+add_executable(hello ${SourceFiles})
+
+# WxWidgets
 aux_source_directory(. SRC_LIST)
 set(wxWidgets_CONFIGURATION mswu)
 find_package(wxWidgets COMPONENTS core base adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
+
+# OpenCv
+find_package( OpenCV COMPONENTS videostab video highgui  core imgproc calib3d REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+target_link_libraries( hello ${OpenCV_LIBS} )
+
+# General
 include_directories(${CMAKE_BINARY_DIR}/generated)
-set(CMAKE_CXX_FLAGS "-std=c++1y -stdlib=libc++ ${CMAKE_CXX_FLAGS}" )
+set(CMAKE_CXX_FLAGS "-std=c++11  -g ${CMAKE_CXX_FLAGS}" )
 
 
 add_custom_command(
@@ -21,3 +34,7 @@ add_custom_command(
   VERBATIM
 )
 
+
+set(AllFiles ${SourceFiles} ${HeaderFiles})
+string(REPLACE ";" "\n" AllFiles "${AllFiles}")
+file(WRITE ${CMAKE_BINARY_DIR}/cscope.files "${AllFiles}")

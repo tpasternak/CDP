@@ -17,11 +17,10 @@ int function_b() { return 1; }
 
 class MyApp : public wxApp {
 public:
-  unique_ptr<MainFrame> frame;
+  MainFrame* frame;
   virtual bool OnInit() {
-    frame = make_unique<MainFrame>(nullptr);
+    frame = new MainFrame(nullptr);
     frame->Show(true);
-    frame.release();
     return true;
   };
 };
