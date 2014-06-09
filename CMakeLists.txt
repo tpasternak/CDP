@@ -16,14 +16,14 @@ find_package(wxWidgets COMPONENTS core base adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 
-# OpenCv
-find_package( OpenCV COMPONENTS videostab video highgui  core imgproc calib3d REQUIRED )
+# OpenCV
+find_package( OpenCV COMPONENTS videostab video highgui core imgproc calib3d REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 target_link_libraries( hello ${OpenCV_LIBS} )
 
 # General
 include_directories(${CMAKE_BINARY_DIR}/generated)
-set(CMAKE_CXX_FLAGS "-std=c++11  -g ${CMAKE_CXX_FLAGS}" )
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -g ${CMAKE_CXX_FLAGS}" )
 
 
 add_custom_command(

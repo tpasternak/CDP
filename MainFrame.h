@@ -12,6 +12,7 @@ class MainFrame : public MainFrameBase {
 public:
   MainFrame(wxWindow *parent) : MainFrameBase(parent){};
   virtual void onMenuSelection(wxCommandEvent &event) override;
+  virtual void onLeftClick(wxMouseEvent &event) override;
 };
 
 #endif // MAINFRAME

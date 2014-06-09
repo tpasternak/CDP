@@ -18,7 +18,7 @@ int function_b() { return 1; }
 class MyApp : public wxApp {
 public:
   MainFrame* frame;
-  virtual bool OnInit() {
+  virtual bool OnInit() override {
     frame = new MainFrame(nullptr);
     frame->Show(true);
     return true;
