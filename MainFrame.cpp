@@ -9,6 +9,7 @@ using namespace std;
 #include <wx/wfstream.h>
 #include <wx/log.h>
 #include <wx/filedlg.h>
+#include <wx/dcclient.h>
 
 // OPENCV
 #include <opencv2/opencv.hpp>
@@ -51,12 +52,20 @@ void MainFrame::onMenuSelection(wxCommandEvent &) {
   m_scrolledWindow2->FitInside();
 }
 
-void MainFrame::onLeftClick(wxMouseEvent &event) {
+/**
+ * @brief Returns 0-based index of the first free row in a grid
+ */
+int firstFreeRow(const wxGrid &grid) {
   using cit = boost::counting_iterator<int>;
-  const auto size = m_grid2->GetNumberRows();
-  const auto row = find_if(cit(0), cit(size), [this](int x) {
-    return "" == m_grid2->GetCellValue(x, 0) &&
-           "" == m_grid2->GetCellValue(x, 1);
+  const auto size = grid.GetNumberRows();
+  const auto row = find_if(cit(0), cit(size), [&grid](int x) {
+    return "" == grid.GetCellValue(x, 0) && "" == grid.GetCellValue(x, 1);
   });
-  m_grid2->SetCellValue(*row, 0, _("XYZ"));
+  return *row;
+}
+
+void MainFrame::onLeftClick(wxMouseEvent &event) {
+  const auto row = firstFreeRow(*this->m_grid2);
+  const auto pointCoordinates = event.GetLogicalPosition(wxClientDC(m_bitmap3));
+  m_grid2->SetCellValue(row, 0, to_string(pointCoordinates.x) + ";" + to_string(pointCoordinates.y));
 }
