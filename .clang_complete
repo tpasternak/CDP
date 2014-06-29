@@ -1,5 +1,6 @@
+-std=c++11
 -I.
--I/usr/include/wx-2.8/
+-I/usr/include/wx-3.0/
 -I/usr/local/include/c++/v1/
 -I/home/tomasz/Documents/mm/emacs-build/generated/
 -I/usr/lib/x86_64-linux-gnu/wx/include/gtk2-unicode-release-2.8/
