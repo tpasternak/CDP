@@ -23,7 +23,7 @@ target_link_libraries( hello ${OpenCV_LIBS} )
 
 # General
 include_directories(${CMAKE_BINARY_DIR}/generated)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -g ${CMAKE_CXX_FLAGS}" )
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11  ${CMAKE_CXX_FLAGS}" )
 
 
 add_custom_command(

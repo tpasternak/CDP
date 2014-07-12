@@ -18,6 +18,7 @@ using namespace std;
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/algorithm/string.hpp>
 
 using boost::property_tree::ptree;
 using boost::property_tree::read_json;
@@ -25,6 +26,10 @@ using boost::property_tree::write_json;
 
 using cv::Mat;
 using cv::Mat_;
+
+ptree getMappingJsonSerialized(const wxGrid &grid);
+int firstFreeRow(const wxGrid &grid);
+void writeJsonToFile(const ptree &ptree_, const string &path);
 
 inline Mat getImage(cv::VideoCapture &capture) {
   Mat mat;
@@ -63,45 +68,54 @@ void MainFrame::loadVideo(string const &path) {
   m_bitmap3->SetBitmap(*image);
   m_scrolledWindow2->FitInside();
 }
-#include <boost/algorithm/string.hpp>
+
 void MainFrame::onSave(wxCommandEvent &) {
-  wxFileDialog saveFileDialog(this, _("Open YML file"), _(""), _(""),
-                              _("YML files (*.yml)|*.yml"), wxFD_SAVE);
+  wxFileDialog saveFileDialog(this, _("Open JSON file"), _(""), _(""),
+                              _("json files (*.json)|*.json"), wxFD_SAVE);
   if (saveFileDialog.ShowModal() == wxID_CANCEL) {
     return;
   }
-  wxFileInputStream input_stream(saveFileDialog.GetPath());
+  wxFileOutputStream input_stream(saveFileDialog.GetPath());
   if (!input_stream.IsOk()) {
     return;
   };
   const string path = string(saveFileDialog.GetPath().mb_str());
-  const int size = m_grid2->GetNumberRows();
+  fstream f(path);
+  const auto tree = getMappingJsonSerialized(*m_grid2);
+  writeJsonToFile(tree, path);
+}
 
-  std::ostringstream buf;
-  ptree array, array_upper;
-  ptree child1, child2;
+ptree getMappingJsonSerialized(const wxGrid &grid) {
+  ptree root;
+  ptree mappingArray;
+  const int size = firstFreeRow(grid);
+  for (int i = 0; i < size; ++i) {
+    ptree child;
+    std::vector<std::string> strings2d;
+    std::vector<std::string> strings3d;
+    string cellValue2d = string(grid.GetCellValue(i, 0));
+    string cellValue3d = string(grid.GetCellValue(i, 1));
+    boost::split(strings2d, cellValue2d, boost::is_any_of(";"));
+    boost::split(strings3d, cellValue3d, boost::is_any_of(";"));
+    child.put("2d-X", strings2d[0]);
+    child.put("2d-Y", strings2d[1]);
+    child.put("3d-X", strings3d[0]);
+    child.put("3d-Y", strings3d[1]);
+    child.put("3d-Z", strings3d[2]);
+    mappingArray.push_back(make_pair("", child));
+  }
+  root.add_child("mapping", mappingArray);
+  return root;
+}
 
-  std::vector<std::string> strings2d;
-  std::vector<std::string> strings3d;
-  string cellValue2d = string(m_grid2->GetCellValue(0, 0));
-  string cellValue3d = string(m_grid2->GetCellValue(0, 1));
-  boost::split(strings2d, cellValue2d, boost::is_any_of(";"));
-  boost::split(strings3d, cellValue3d, boost::is_any_of(";"));
-  child1.put("2d-X", strings2d[0]);
-  child1.put("2d-Y", strings2d[1]);
-  child1.put("3d-X", strings3d[0]);
-  child1.put("3d-Y", strings3d[1]);
-  child1.put("3d-Z", strings3d[2]);
-  array.push_back(make_pair("", child1));
-  array.push_back(make_pair("", child2));
-  array_upper.add_child("abc", array);
-  write_json(buf, array_upper, true);
-  std::string json = buf.str();
-  std::cout << json << std::endl;
+void writeJsonToFile(const ptree &ptree_, const string &path) {
+  std::fstream file(path);
+  write_json(file, ptree_, true);
+  file.close();
 }
 
 /**
- * @brief Returns 0-based index of the first free row in a grid
+ * @brief Returns 0-based index of the first free row in the grid
  */
 int firstFreeRow(const wxGrid &grid) {
   using cit = boost::counting_iterator<int>;
