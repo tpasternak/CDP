@@ -4,7 +4,7 @@ find_package(GTest REQUIRED)
 find_package (Threads)
 
 # include_directories(${GTEST_INCLUDE_DIRS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wextra -std=c++11")
 add_executable(ut
   code.cpp
   ut/tests.cpp
