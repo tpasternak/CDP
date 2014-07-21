@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <tuple>
-#include "code.h"
+#include "Mapping.h"
 
 using namespace std;
 using namespace moa::mappings;

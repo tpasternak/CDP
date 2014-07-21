@@ -1,0 +1,71 @@
+#include "Mapping.h"
+#include "Calibration.h"
+#include <algorithm>
+#include <fstream>
+#include <iterator>
+
+#include <boost/program_options.hpp>
+
+using namespace moa::mappings;
+using namespace std;
+using namespace cv;
+
+tuple<Mat, Mat> extrinisicParams(tuple<Mat, Mat> const &calibParams,
+                                 mapping2dto3d const &mapping) {
+  vector<Point2f> points2d;
+  transform(
+      begin(mapping), end(mapping), back_inserter(points2d),
+      [](remove_reference<decltype(mapping)>::type::value_type const &elem)
+          -> Point2f {
+        return {static_cast<float>(get<0>(elem.first)),
+                static_cast<float>(get<1>(elem.first))};
+      });
+  vector<Point3f> points3d;
+  transform(
+      begin(mapping), end(mapping), back_inserter(points3d),
+      [](remove_reference<decltype(mapping)>::type::value_type const &elem)
+          -> Point3f {
+        return {static_cast<float>(get<0>(elem.second)),
+                static_cast<float>(get<1>(elem.second)),
+                static_cast<float>(get<2>(elem.second))
+
+        };
+      });
+
+  Mat rvec, tvec;
+  solvePnP(points3d, points2d, get<0>(calibParams), get<1>(calibParams), rvec,
+           tvec, false, CV_ITERATIVE);
+  return make_tuple(rvec, tvec);
+}
+
+void setupOptions(int ac, char **av) {
+  namespace po = boost::program_options;
+  po::options_description desc("OPTIONS:");
+  po::positional_options_description pod;
+  pod.add("mapping", 1);
+  desc.add_options()("help,h", "Print this message")(
+      "video,v", po::value<string>(), "Video File (.wmv)")(
+      "mapping", po::value<string>(), "Mapping JSON file")(
+      "background,b", po::value<string>(), "Background image file")(
+      ",c", po::value<string>(), "Intrinisic calibration parameters file");
+
+  po::variables_map vm;
+  po::store(po::command_line_parser(ac, av).options(desc).positional(pod).run(),
+            vm);
+  po::notify(vm);
+
+  if (vm.count("help")) {
+    std::cout << "OVERVIEW: Morphological Operations App" << endl << endl;
+    std::cout << "USAGE: moa [options] <mapping>" << std::endl << endl;
+    cout << desc << "\n";
+  }
+}
+
+int main(int ac, char **argv) {
+  setupOptions(ac, argv);
+  std::fstream mappingFile;
+  mappingFile.open("mapping.json");
+  //  auto mapping = getMapping(mappingFile);
+  //  auto calibParams = readCalibParams("CalibrationParams.yml");
+  //  auto extParams = extrinisicParams(calibParams, mapping);
+}
