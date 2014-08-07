@@ -101,7 +101,7 @@ ptree getMappingJsonSerialized(const wxGrid &grid) {
     child.put("3d-X", strings3d[0]);
     child.put("3d-Y", strings3d[1]);
     child.put("3d-Z", strings3d[2]);
-    mappingArray.push_back(make_pair("", child));
+    mappingarray.push_back(make_pair("", child));
   }
   root.add_child("mapping", mappingArray);
   return root;

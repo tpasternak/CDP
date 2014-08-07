@@ -1,4 +1,7 @@
+-std=c++11
+-I.
 -I/usr/include/
+-I/usr/local/include/
 -I/usr/include/wx-3.0/
 -I/usr/local/include/c++/v1/
 -I/home/tomasz/Documents/mm/emacs-build/generated/
