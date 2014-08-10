@@ -15,6 +15,7 @@ using namespace cv;
 
 tuple<Mat, Mat> extrinisicParams(tuple<Mat, Mat> const &calibParams,
                                  mapping2dto3d const &mapping) {
+  new int;
   vector<Point2f> points2d;
   transform(
       begin(mapping), end(mapping), back_inserter(points2d),
@@ -42,7 +43,7 @@ tuple<Mat, Mat> extrinisicParams(tuple<Mat, Mat> const &calibParams,
 
 namespace po = boost::program_options;
 po::variables_map setupOptions(int ac, char **av) {
-  po::options_description desc("OPTIONS:");
+  po::options_description desc("OPTIONS");
   po::positional_options_description pod;
   pod.add("mapping", 1);
   pod.add("video", 2);
@@ -86,11 +87,10 @@ int main(int ac, char **argv) {
 
   mappingFile.open(vm["mapping"].as<string>());
   auto mapping = getMapping(mappingFile);
-  //  auto calibParams = readCalibParams("CalibrationParams.yml");
-  //  auto extParams = extrinisicParams(calibParams, mapping);
-  
+  auto calibParams = readCalibParams("CalibrationParams.yml");
+  auto extParams = extrinisicParams(calibParams, mapping);
+  cout << get<1>(calibParams);
   imshow( "Display window", file);
-  fun(file);
   waitKey(0); 
 
 }
