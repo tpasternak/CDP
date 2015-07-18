@@ -16,7 +16,7 @@ public:
   virtual void onLeftClick(wxMouseEvent &event) override;
 
 private:
-  void loadVideo(string const &path);
+  void loadImage(string const &path);
 };
 
 #endif // MAINFRAME

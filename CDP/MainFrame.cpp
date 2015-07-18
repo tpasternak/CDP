@@ -37,8 +37,13 @@ inline Mat getImage(cv::VideoCapture &capture) {
 }
 
 inline wxImage *getFirstFrame(string const &path) {
-  cv::VideoCapture videoCapture(path);
-  cv::Mat firstFrame = getImage(videoCapture);
+  Mat firstFrame;
+  if (path.substr(path.find_last_of('.')) == "wmv") {
+    cv::VideoCapture videoCapture(path);
+    firstFrame = getImage(videoCapture);
+  } else {
+    firstFrame = cv::imread(path);
+  }
   void *memory = ::operator new(firstFrame.cols * firstFrame.rows * 3);
   cv::Mat rgbMat(firstFrame.rows, firstFrame.cols, CV_8UC(3), memory);
   cv::cvtColor(firstFrame, rgbMat, CV_BGR2RGB);
@@ -49,7 +54,7 @@ inline wxImage *getFirstFrame(string const &path) {
 void MainFrame::onLoad(wxCommandEvent &) {
 
   wxFileDialog openFileDialog(this, _("Open XYZ file"), _(""), _(""),
-                              _("WMV files (*.wmv)|*.wmv"),
+                              _("WMV files (*.wmv)|*.wmv;*.jpg|JPG files (*.jpg)|*.jpg"),
                               wxFD_OPEN | wxFD_FILE_MUST_EXIST);
   if (openFileDialog.ShowModal() == wxID_CANCEL) {
     return;
@@ -59,10 +64,10 @@ void MainFrame::onLoad(wxCommandEvent &) {
     return;
   };
   const string path = string(openFileDialog.GetPath().mb_str());
-  loadVideo(path);
+  loadImage(path);
 }
 
-void MainFrame::loadVideo(string const &path) {
+void MainFrame::loadImage(string const &path) {
   const auto image = getFirstFrame(path);
   m_bitmap3->SetBitmap(*image);
   m_scrolledWindow2->FitInside();

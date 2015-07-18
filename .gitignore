@@ -1,3 +1,5 @@
 /build/
 /emacs-build/*
 *~
+build-*
+*.user
